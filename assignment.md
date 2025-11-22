@@ -27,7 +27,7 @@ Question: Group by `rated` and count the number of movies in each.
 Answer:
 
 ```
-#group by = $group
+
 stage_group_rated = {
    "$group": {
          "_id": "$rated",
