@@ -41,7 +41,7 @@ pipeline = [
 ]
 results = movies.aggregate(pipeline)
 
-# Loop through the 'year-summary' documents:
+
 for year_summary in results:
    print(year_summary)
 ```
@@ -53,7 +53,7 @@ Question: Count the number of movies with 3 comments or more.
 Answer:
 
 ```
-# Look up related documents in the 'comments' collection:
+
 stage_lookup_comments = {
    "$lookup": {
          "from": "comments", 
@@ -63,7 +63,6 @@ stage_lookup_comments = {
    }
 }
 
-# Calculate the number of comments for each movie:
 stage_add_comment_count = {
    "$addFields": {
          "comment_count": {
@@ -72,7 +71,7 @@ stage_add_comment_count = {
    } 
 }
 
-# Match movie documents with at least 3 comment:
+
 stage_match_with_comments = {
    "$match": {
          "comment_count": {
