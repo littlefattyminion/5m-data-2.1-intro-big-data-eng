@@ -14,7 +14,9 @@ Question: From the `movies` collection, return the documents with the `plot` tha
 
 Answer:
 
-```python
+``
+for m in movies.find({"plot": {"$regex": "war"}}).sort('released', pymongo.DESCENDING).limit(5):
+    print(f"{m['title']} ({m['plot']}) was released in {m['released']}")
 
 ```
 
@@ -24,8 +26,24 @@ Question: Group by `rated` and count the number of movies in each.
 
 Answer:
 
-```python
+```
+#group by = $group
+stage_group_rated = {
+   "$group": {
+         "_id": "$rated",
+         # Count the number of movies in the group:
+         "movie_count": { "$sum": 1 }, 
+   }
+}
 
+pipeline = [
+   stage_group_rated,
+]
+results = movies.aggregate(pipeline)
+
+# Loop through the 'year-summary' documents:
+for year_summary in results:
+   print(year_summary)
 ```
 
 ### Question 3
@@ -34,7 +52,53 @@ Question: Count the number of movies with 3 comments or more.
 
 Answer:
 
-```python
+```
+# Look up related documents in the 'comments' collection:
+stage_lookup_comments = {
+   "$lookup": {
+         "from": "comments", 
+         "localField": "_id", 
+         "foreignField": "movie_id", 
+         "as": "related_comments",
+   }
+}
+
+# Calculate the number of comments for each movie:
+stage_add_comment_count = {
+   "$addFields": {
+         "comment_count": {
+            "$size": "$related_comments"
+         }
+   } 
+}
+
+# Match movie documents with at least 3 comment:
+stage_match_with_comments = {
+   "$match": {
+         "comment_count": {
+            "$gte": 3
+         }
+   } 
+}
+
+stage_group_count = {
+   "$group": {
+         "_id": None,
+         "movie_count": { "$sum": 1 },
+   }
+}
+
+pipeline = [
+   stage_lookup_comments,
+   stage_add_comment_count,
+   stage_match_with_comments,
+   stage_group_count,
+]
+results = movies.aggregate(pipeline)
+
+for result in results:
+   print(result)
+
 
 ```
 
