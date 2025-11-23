@@ -14,7 +14,7 @@ Question: From the `movies` collection, return the documents with the `plot` tha
 
 Answer:
 
-``
+``python
 for m in movies.find({"plot": {"$regex": "war"}}).sort('released', pymongo.DESCENDING).limit(5):
     print(f"{m['title']} ({m['plot']}) was released in {m['released']}")
 
@@ -26,7 +26,7 @@ Question: Group by `rated` and count the number of movies in each.
 
 Answer:
 
-```
+```python
 
 stage_group_rated = {
    "$group": {
@@ -52,7 +52,7 @@ Question: Count the number of movies with 3 comments or more.
 
 Answer:
 
-```
+```python
 
 stage_lookup_comments = {
    "$lookup": {
