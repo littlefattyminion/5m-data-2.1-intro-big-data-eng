@@ -14,7 +14,8 @@ Question: From the `movies` collection, return the documents with the `plot` tha
 
 Answer:
 
-``python
+```python
+
 for m in movies.find({"plot": {"$regex": "war"}}).sort('released', pymongo.DESCENDING).limit(5):
     print(f"{m['title']} ({m['plot']}) was released in {m['released']}")
 
